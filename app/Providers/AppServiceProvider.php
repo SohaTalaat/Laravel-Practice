@@ -46,6 +46,23 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserReport::class);
 
         $this->app->tag([SalesReport::class, UserReport::class], 'reports');
+
+        // Manual resolve
+        $notifier = app()->make(Notifier::class);
+        $notifier->send("Manual resolve");
+
+        //Extending (decorate service)
+        $this->app->extend(Notifier::class, function ($service, $app) {
+            return new class($service) implements Notifier {
+                public function __construct(private $notifier) {}
+
+                public function send(string $message): void
+                {
+                    logger("Before sending...");
+                    $this->notifier->send($message);
+                }
+            };
+        });
     }
 
     /**
