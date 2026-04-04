@@ -63,6 +63,11 @@ class AppServiceProvider extends ServiceProvider
                 }
             };
         });
+
+        //Rebinding
+        $this->app->rebinding(Notifier::class, function ($notifier, $app) {
+            logger("Notifier Changed!");
+        });
     }
 
     /**
